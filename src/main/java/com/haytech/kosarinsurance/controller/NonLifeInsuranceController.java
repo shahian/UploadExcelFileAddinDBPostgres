@@ -41,32 +41,23 @@ public class NonLifeInsuranceController {
 
     @PutMapping(value = "/v1/nonLifeInsurances")
     public ResponseEntity<NonlifeInsurance> updateNonLifeInsurance(@RequestParam Long id, @RequestBody NonlifeInsurance nonlifeInsurance) {
-        Optional<NonlifeInsurance> nonLifeInsuranceById = nonLifeInsuranceService.getNonLifeInsuranceById(id);
-        if (nonLifeInsuranceById.isPresent()) {
-            nonlifeInsurance.setId(id);
-            NonlifeInsurance updateNonLifeInsurance = nonLifeInsuranceService.updateNonLifeInsurance(nonlifeInsurance);
-            return new ResponseEntity<>(updateNonLifeInsurance, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+
+
+        Optional<NonlifeInsurance> updateNonLifeInsurance = Optional.ofNullable(nonLifeInsuranceService.updateNonLifeInsurance(nonlifeInsurance));
+        return updateNonLifeInsurance.map(insurance -> new ResponseEntity<>(insurance, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping(value = "/v1/nonLifeInsurances")
     public ResponseEntity<Void> deleteNonLifeInsurance(@RequestParam Long id) {
-        Optional<NonlifeInsurance> existinNonlifeInsurance = nonLifeInsuranceService.getNonLifeInsuranceById(id);
-        if (existinNonlifeInsurance.isPresent()) {
-            nonLifeInsuranceService.deleteNonLifeInsurance(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        nonLifeInsuranceService.deleteNonLifeInsurance(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/v1/uploadExcelDataNonLife")
-    public String uploadNonLife(@RequestParam MultipartFile file,
+    public ResponseEntity<String> uploadNonLife(@RequestParam MultipartFile file,
                          @RequestParam Integer numberOfSheet)
             throws Exception {
         nonLifeInsuranceService.upload(file, numberOfSheet);
-        return "ok";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

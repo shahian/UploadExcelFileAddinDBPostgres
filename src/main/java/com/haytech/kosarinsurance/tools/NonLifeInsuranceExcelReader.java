@@ -9,7 +9,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,12 @@ public class NonLifeInsuranceExcelReader {
         try (XSSFWorkbook workbook =new XSSFWorkbook(file.getInputStream())) {
             if (numberOfSheet == null || numberOfSheet < 0) {
                 numberOfSheet = workbook.getNumberOfSheets();
+            }
+            LocalDateTime localDateTime=LocalDateTime.now();
+            String formatedDateBasic = DateTimeFormatter.BASIC_ISO_DATE.format(localDateTime);
+            String fileName = "lifeInsurance" + "-" + formatedDateBasic;
+            try (FileOutputStream outputStream = new FileOutputStream("F:/ImportKosarFile"+fileName+".xlsx")) {
+                workbook.write(outputStream);
             }
             Sheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
             for (int i = 1; i <= sheet.getLastRowNum(); i++) {

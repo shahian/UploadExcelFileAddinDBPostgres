@@ -40,32 +40,21 @@ public class LifeInsuranceController {
 
     @PutMapping(value = "/v1/LifeInsurance")
     public ResponseEntity<LifeInsurance> updateLifeInsurance(@RequestParam Long id, @RequestBody LifeInsurance lifeInsurance) {
-        Optional<LifeInsurance> existingLifeInsurance = lifeInsuranceService.getLifeInsuranceById(id);
-        if (existingLifeInsurance.isPresent()) {
-            lifeInsurance.setId(id);
-            LifeInsurance updatedLifeInsurance = lifeInsuranceService.updateLifeInsurance(lifeInsurance);
-            return new ResponseEntity<>(updatedLifeInsurance, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+      Optional<LifeInsurance> updatedLifeInsurance = Optional.ofNullable(lifeInsuranceService.updateLifeInsurance(lifeInsurance));
+        return updatedLifeInsurance.map(insurance -> new ResponseEntity<>(insurance, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping(value = "/v1/LifeInsurance")
     public ResponseEntity<Void> deleteLifeInsurance(@RequestParam Long id) {
-        Optional<LifeInsurance> existingLifeInsurance = lifeInsuranceService.getLifeInsuranceById(id);
-        if (existingLifeInsurance.isPresent()) {
-            lifeInsuranceService.deleteLifeInsurance(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+         lifeInsuranceService.getLifeInsuranceById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/v1/uploadExcelDataLife")
-    public String uploadLife(@RequestParam MultipartFile file,
+    public ResponseEntity<String> uploadLife(@RequestParam MultipartFile file,
                          @RequestParam Integer numberOfSheet)
             throws Exception {
         lifeInsuranceService.upload(file, numberOfSheet);
-        return "ok";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

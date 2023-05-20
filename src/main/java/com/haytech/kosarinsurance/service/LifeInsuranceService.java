@@ -37,19 +37,30 @@ public class LifeInsuranceService {
     }
 
     public LifeInsurance updateLifeInsurance(LifeInsurance lifeInsurance) {
-        return lifeInsuranceRepository.save(lifeInsurance);
+        Optional<LifeInsurance> existingLifeInsurance = lifeInsuranceRepository.findByIdAndIsDeletedFalse(lifeInsurance.getId());
+        if (existingLifeInsurance.isPresent()) {
+            return lifeInsuranceRepository.save(lifeInsurance);
+        } else {
+            return null;
+        }
+
     }
 
     public void deleteLifeInsurance(Long id) {
-        lifeInsuranceRepository.deleteById(id);
-    }
 
+        Optional<LifeInsurance> lifeInsurance = lifeInsuranceRepository.findByIdAndIsDeletedFalse(id);
+        if (lifeInsurance.isPresent()) {
+            lifeInsurance.get().setIsDeleted(false);
+            lifeInsuranceRepository.save(lifeInsurance.get());
+        }
+    }
 
     public void upload(MultipartFile file, Integer numberOfSheet) throws IOException {
         LifeInsuranceExcelReader lifeInsuranceExcelReader = new LifeInsuranceExcelReader();
-        List<LifeInsurance> lifeInsurances = lifeInsuranceExcelReader.readExcelFile2(file,numberOfSheet);
+        List<LifeInsurance> lifeInsurances = lifeInsuranceExcelReader.readExcelFile2(file, numberOfSheet);
         lifeInsuranceRepository.saveAll(lifeInsurances);
     }
+
     public String upload1(MultipartFile file, Integer numberOfSheet) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         if (numberOfSheet == null || numberOfSheet < 0) {

@@ -1,9 +1,7 @@
 package com.haytech.kosarinsurance.service;
 
-import com.haytech.kosarinsurance.model.entity.LifeInsurance;
 import com.haytech.kosarinsurance.model.entity.NonlifeInsurance;
 import com.haytech.kosarinsurance.repository.NonLifeInsuranceRepository;
-import com.haytech.kosarinsurance.tools.LifeInsuranceExcelReader;
 import com.haytech.kosarinsurance.tools.NonLifeInsuranceExcelReader;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -40,19 +38,31 @@ public class NonLifeInsuranceService {
     }
 
     public NonlifeInsurance updateNonLifeInsurance(NonlifeInsurance nonLifeInsurance) {
-        return nonLifeInsuranceRepository.save(nonLifeInsurance);
+        Optional<NonlifeInsurance> nonlifeInsuranceExist = nonLifeInsuranceRepository.findByIdAndIsDeletedFalse(nonLifeInsurance.getId());
+        if (nonlifeInsuranceExist.isPresent()) {
+            return nonLifeInsuranceRepository.save(nonLifeInsurance);
+        } else {
+            return null;
+        }
+
     }
 
     public void deleteNonLifeInsurance(Long id) {
-        nonLifeInsuranceRepository.deleteById(id);
+        Optional<NonlifeInsurance> nonlifeInsurance = nonLifeInsuranceRepository.findByIdAndIsDeletedFalse(id);
+        if (nonlifeInsurance.isPresent()) {
+            nonlifeInsurance.get().setIsDeleted(false);
+            nonLifeInsuranceRepository.save(nonlifeInsurance.get());
+        }
+
     }
 
 
     public void upload(MultipartFile file, Integer numberOfSheet) throws IOException {
         NonLifeInsuranceExcelReader nonLifeInsuranceExcelReader = new NonLifeInsuranceExcelReader();
-        List<NonlifeInsurance> nonlifeInsurances = nonLifeInsuranceExcelReader.readExcelFile(file,numberOfSheet);
+        List<NonlifeInsurance> nonlifeInsurances = nonLifeInsuranceExcelReader.readExcelFile(file, numberOfSheet);
         nonLifeInsuranceRepository.saveAll(nonlifeInsurances);
     }
+
     public String upload1(MultipartFile file, Integer numberOfSheet) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         if (numberOfSheet == null || numberOfSheet < 0) {

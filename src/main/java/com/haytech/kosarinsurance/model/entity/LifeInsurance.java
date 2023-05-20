@@ -1,5 +1,6 @@
 package com.haytech.kosarinsurance.model.entity;
 
+import com.haytech.kosarinsurance.model.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -10,10 +11,10 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Getter
 @Setter
-public class LifeInsurance {
+public class LifeInsurance extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
