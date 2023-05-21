@@ -2,7 +2,8 @@ package com.haytech.kosarinsurance.service;
 
 import com.haytech.kosarinsurance.model.entity.RetireOrgan;
 import com.haytech.kosarinsurance.repository.RetireOrganRepository;
-import com.haytech.kosarinsurance.tools.RetireOrganExcelReader;
+import com.haytech.kosarinsurance.tools.exportFiles.RetireOrganExportToExcel;
+import com.haytech.kosarinsurance.tools.importFiles.RetireOrganExcelReader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,5 +55,10 @@ public class RetireOrganService {
         RetireOrganExcelReader retireOrganExcelReader = new RetireOrganExcelReader();
         List<RetireOrgan> retireOrgans = retireOrganExcelReader.readExcelFile(file, numberOfSheet);
         retireOrganRepository.saveAll(retireOrgans);
+    }
+
+    public void exportToExcel() throws IOException {
+        List<RetireOrgan> retireOrganList =retireOrganRepository.findAllByIsDeletedFalse();
+        RetireOrganExportToExcel.exportToExcel(retireOrganList);
     }
 }

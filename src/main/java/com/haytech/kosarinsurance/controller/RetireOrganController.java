@@ -27,20 +27,20 @@ public class RetireOrganController {
     }
 
     @GetMapping(value = "/v1/retireOrgan")
-    public ResponseEntity<RetireOrgan> getNonLifeInsuranceById(@RequestParam Long id) {
+    public ResponseEntity<RetireOrgan> getRetireOrganById(@RequestParam Long id) {
         Optional<RetireOrgan> retireOrgan = retireOrganService.getRetireOrganById(id);
         return retireOrgan.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping(value = "/v1/retireOrgan")
-    public ResponseEntity<RetireOrgan> createNonLifeInsurance(@RequestBody RetireOrgan retireOrgan) {
+    public ResponseEntity<RetireOrgan> createRetireOrgan(@RequestBody RetireOrgan retireOrgan) {
         RetireOrgan retireOrgan1 = retireOrganService.createRetireOrgan(retireOrgan);
         return new ResponseEntity<>(retireOrgan1, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/v1/retireOrgan")
-    public ResponseEntity<RetireOrgan> updateNonLifeInsurance(@RequestParam Long id, @RequestBody RetireOrgan retireOrgan) {
+    public ResponseEntity<RetireOrgan> updateRetireOrgan(@RequestParam Long id, @RequestBody RetireOrgan retireOrgan) {
 
 
         Optional<RetireOrgan> retireOrganExist = Optional.ofNullable(retireOrganService.updateRetireOrgan(retireOrgan));
@@ -48,17 +48,23 @@ public class RetireOrganController {
     }
 
     @DeleteMapping(value = "/v1/retireOrgan")
-    public ResponseEntity<Void> deleteNonLifeInsurance(@RequestParam Long id) {
+    public ResponseEntity<Void> deleteRetireOrgan(@RequestParam Long id) {
         retireOrganService.deleteRetireOrgan(id);
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
     @PostMapping("/v1/uploadExcelDataRetireOrgan")
-    public ResponseEntity<String> uploadNonLife(@RequestParam MultipartFile file,
+    public ResponseEntity<String> uploadRetireOrgan(@RequestParam MultipartFile file,
                                                 @RequestParam Integer numberOfSheet)
             throws Exception {
         retireOrganService.upload(file, numberOfSheet);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PostMapping("/v1/exportExcelDataRetireOrgan")
+    public ResponseEntity<String> exportRetireOrgan()
+            throws Exception {
+        retireOrganService.exportToExcel();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

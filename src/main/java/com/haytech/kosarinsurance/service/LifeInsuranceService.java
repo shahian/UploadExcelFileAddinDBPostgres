@@ -2,7 +2,7 @@ package com.haytech.kosarinsurance.service;
 
 import com.haytech.kosarinsurance.model.entity.LifeInsurance;
 import com.haytech.kosarinsurance.repository.LifeInsuranceRepository;
-import com.haytech.kosarinsurance.tools.LifeInsuranceExcelReader;
+import com.haytech.kosarinsurance.tools.importFiles.LifeInsuranceExcelReader;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
